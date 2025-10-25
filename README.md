@@ -2,6 +2,8 @@
 
 A small, fun practice project to learn Postgres using Supabase. Track your anime list with your friends through a multi-user login system, experiment with database schemas and RLS, and practice building a React + TypeScript app.
 
+live link - https://animetracker-postgresql.vercel.app
+
 the styling is very basic cus that wasn't the focus here (might come back to fix it tho)
 
 ### Stack
