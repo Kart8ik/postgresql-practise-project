@@ -1,15 +1,23 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { toast } from "sonner";
+import background from "@/assets/background.jpg";
 
 export default function Login() {
     const [userData, setUserData] = useState({ username: '', email: '', password: '' });
     const [isSignUp, setIsSignUp] = useState(false);
 
     
+    useEffect(() => {
+        const prevOverflow = document.body.style.overflow;
+        document.body.style.overflow = 'hidden';
+        return () => {
+            document.body.style.overflow = prevOverflow || '';
+        };
+    }, []);
 
     const handleSignUp = async () => {
         console.log(userData);
@@ -48,11 +56,16 @@ export default function Login() {
     }
 
     return (
-        <section className="grid min-h-[100dvh] place-items-center px-4 py-12">
-            <Card className="w-full max-w-sm">
+        <section className="relative grid h-screen w-screen place-items-center overflow-hidden bg-cover bg-no-repeat"
+            style={{
+                backgroundImage: `url(${background})`,
+            }}
+        >
+            <div className="absolute inset-0 bg-black/60" />
+            <Card className="relative z-10 w-full max-w-sm text-center">
                 <CardHeader>
-                    <CardTitle>Welcome to Anime Tracker</CardTitle>
-                    <div className="flex w-full flex-row gap-2">
+                    <CardTitle className="text-2xl font-bold mb-4">Welcome to Anime Tracker</CardTitle>
+                    <div className="flex w-full flex-row align-middle justify-center gap-4">
                     <Button variant="outline" onClick={() => setIsSignUp(true)}>Sign up</Button>
                     <Button variant="outline" onClick={() => setIsSignUp(false)}>Login</Button>
                     </div>

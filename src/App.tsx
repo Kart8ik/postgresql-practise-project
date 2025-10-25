@@ -16,9 +16,9 @@ function Layout() {
   const showNavbar = !!session;
 
   return (
-    <div className="min-h-dvh bg-background">
+    <div className="min-h-screen w-screen flex flex-col bg-background overflow-hidden">
       {showNavbar && <Navbar />}
-      <main className="container mx-auto px-4 py-8">
+      <main className="h-full w-full flex-1 overflow-hidden">
         <Routes>
           {user ? (
             <>

@@ -45,7 +45,7 @@ export default function Dashboard() {
     }, []);
 
     return (
-        <section className="space-y-6">
+        <section className="container mx-auto space-y-6 py-8 px-4 overflow-y-auto">
             <h2 className="text-2xl font-semibold tracking-tight">My Anime List</h2>
             <AnimeForm anime={anime} setAnime={setAnime} />
             <div className="flex flex-col gap-4">
