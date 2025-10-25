@@ -1,73 +1,78 @@
-# React + TypeScript + Vite
+## Anime Tracker (Supabase + Postgres Practice)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A small, fun practice project to learn Postgres using Supabase. Track your anime list, experiment with database schemas and RLS, and practice building a React + TypeScript app.
 
-Currently, two official plugins are available:
+### Stack
+- React + TypeScript + Vite
+- Supabase (Auth, Postgres, RLS)
+- Tailwind CSS (with Radix UI primitives (basically ShadCN))
+- Sonner (toasts)
+- React Router
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+### Features
+- Email/password auth via Supabase
+- Public users table mirrored from `auth.users` (via app logic) with RLS
+- Add/remove anime with fields: title, genre, status, personal rating
+- Minimal client-side validation (required fields, rating 0–10)
+- Dashboard and Leaderboard pages
+- Toast feedback for common actions
 
-## React Compiler
+### Database (suggested)
+You can adapt this to your needs, but the app assumes something like:
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+```sql
+-- public.users
+user_id uuid primary key references auth.users(id) on delete cascade,
+username text not null
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+-- public.anime_list
+id uuid primary key default gen_random_uuid(),
+user_id uuid not null references auth.users(id) on delete cascade,
+title text not null,
+genre text not null,
+personal_rating int not null check (personal_rating between 0 and 10),
+status text not null,
+created_at timestamptz not null default now()
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+RLS (example):
+- Enable RLS on both tables.
+- `public.users`: insert/select/update/delete where `auth.uid() = user_id`.
+- `public.anime_list`: all operations where `auth.uid() = user_id`.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### How the mirror works
+- On sign-up, the app waits for an authenticated session (or the subsequent sign-in event) and upserts a row into `public.users` with `user_id` and `username`.
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### Setup
+1) Create a Supabase project and get your URL and anon key.
+2) Create tables and RLS policies (example above).
+3) Copy env and run the dev server.
+
+Env vars (create `.env.local`):
+```bash
+VITE_SUPABASE_URL=your-supabase-url
+VITE_SUPABASE_ANON_KEY=your-anon-key
 ```
+
+### Scripts
+```bash
+npm install       # install deps
+npm run dev       # start dev server
+npm run build     # type-check and build
+npm run preview   # preview production build
+```
+
+### Notes
+- Toaster is mounted in `src/App.tsx`.
+- Auth context is provided by `src/Context.tsx`.
+- Client-side validation is minimal by design to keep focus on Postgres/Supabase learning.
+
+### Folder highlights
+- `src/pages/login.tsx`: sign up / sign in and user mirroring logic
+- `src/pages/dashboard.tsx`: fetch and display your anime, upsert user at mount
+- `src/components/anime-form.tsx`: validated form to add anime
+- `src/components/anime-card.tsx`: delete anime items
+
+---
+
+This project is intentionally lightweight so I could iterate quickly and focus on learning Postgres, RLS, and Supabase in a realistic app.
