@@ -20,8 +20,8 @@ export default function Login() {
     }, []);
 
     const handleSignUp = async () => {
-        console.log(userData);
-        const { data, error } = await supabase.auth.signUp({
+        // console.log(userData);
+        const { data: _signUpData, error } = await supabase.auth.signUp({
             email: userData.email,
             password: userData.password,
             options: {
@@ -35,14 +35,14 @@ export default function Login() {
             console.error('Sign up error:', error);
             toast.error(error.message);
         } else {
-            console.log('Sign up data:', data);
+            // console.log('Sign up data:', _signUpData);
             toast.success("Sign up successful");
         }
     }
 
     const handleLogin = async () => {
-        console.log(userData);
-        const { data, error } = await supabase.auth.signInWithPassword({
+        // console.log(userData);
+        const { data: _loginData, error } = await supabase.auth.signInWithPassword({
             email: userData.email,
             password: userData.password,
         });
@@ -50,7 +50,7 @@ export default function Login() {
             console.error('Login error:', error);
             toast.error(error.message);
         } else {
-            console.log('Login data:', data);
+            // console.log('Login data:', _loginData);
             toast.success("Login successful");
         }
     }

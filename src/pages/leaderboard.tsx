@@ -16,7 +16,7 @@ export default function Leaderboard() {
             if (error) {
                 console.error('Fetch leaderboard error:', error);
             } else {
-                console.log('Fetch leaderboard data:', data);
+				// console.log('Fetch leaderboard data:', data);
                 setLeaderboard(data);
             }
         }

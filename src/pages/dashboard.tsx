@@ -10,33 +10,31 @@ export default function Dashboard() {
     const [anime, setAnime] = useState<any[]>([]);
 
     const upsertUser = async () => {
-        console.log('Upserting user:', user.user_metadata.username);
+		// console.log('Upserting user:', user.user_metadata.username);
         const {data: userData, error: userError} = await supabase.from('users').select('*').eq('user_id', user.id);
         if (userError) {
             console.error('Fetch user error:', userError);
         } else if (userData.length === 0) {
-            console.log('Fetch user data:', userData);
-            const { data: insertData, error: insertError } = await supabase.from('users').upsert({
+			// console.log('Fetch user data:', userData);
+			const { data: _insertData, error: insertError } = await supabase.from('users').upsert({
                 username: user.user_metadata.username,
             });
             if (insertError) {
                 console.error('Insert error:', insertError);
-            } else {
-                console.log('Insert data:', insertData);
-            }
+			}
         }
     }
 
     useEffect(() => {
         upsertUser();
         const fetchAnime = async () => {
-            console.log('Fetching anime for user:', user);
+			// console.log('Fetching anime for user:', user);
             const { data, error } = await supabase.from('anime_list').select('*').eq('user_id', user.id).order('title', { ascending: true });
             if (error) {
                 console.error('Fetch anime error:', error);
                 toast.error('Failed to fetch anime');
             } else {
-                console.log('Fetch anime data:', data);
+				// console.log('Fetch anime data:', data);
                 toast.success('Anime fetched successfully');
                 setAnime(data);
             }

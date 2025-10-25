@@ -39,8 +39,8 @@ export default function AnimeForm({ anime, setAnime }: { anime: any, setAnime: (
             return;
         }
 
-        console.log({ title, genre, status, personal_rating: rating });
-        const { data, error } = await supabase.from('anime_list').insert({
+        // console.log({ title, genre, status, personal_rating: rating });
+        const { data: _insertAnime, error } = await supabase.from('anime_list').insert({
             title,
             genre,
             personal_rating: rating,
@@ -56,7 +56,7 @@ export default function AnimeForm({ anime, setAnime }: { anime: any, setAnime: (
                 status: "",
             });
         } else {
-            console.log('Add anime data:', data);
+            // console.log('Add anime data:', _insertAnime);
             toast.success('Anime added successfully');
             setAnime([...anime, { title, genre, personal_rating: rating, status }]);
             setFormData({

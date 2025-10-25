@@ -3,10 +3,11 @@ import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { toast } from "sonner";
-
+import { useNavigate } from "react-router-dom";
 
 export default function Navbar() {
     const [isDark, setIsDark] = useState<boolean>(false);
+    const navigate = useNavigate();
     useEffect(() => {
         try {
             const stored = localStorage.getItem("theme");
@@ -35,6 +36,7 @@ export default function Navbar() {
             toast.error("Logout failed");
         } else {
             toast.success("Logout successful");
+            navigate("/");
         }
     }
     return (

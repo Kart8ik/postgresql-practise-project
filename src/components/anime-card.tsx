@@ -15,13 +15,13 @@ interface AnimeCardProps {
 export default function AnimeCard({ title, status, genre, personalRating, setAnime }: AnimeCardProps) {
     const { user } = useAuth();
     const handleDelete = async (title: string) => {
-        console.log('Deleting anime:', title, 'User ID:', user.id);
-        const { data, error } = await supabase.from('anime_list').delete().eq('title', title).eq('user_id', user.id);
+        // console.log('Deleting anime:', title, 'User ID:', user.id);
+        const { data: _deleted, error } = await supabase.from('anime_list').delete().eq('title', title).eq('user_id', user.id);
         if (error) {
             console.error('Delete anime error:', error);
             toast.error('Failed to delete anime');
         } else {
-            console.log('Delete anime data:', data);
+            // console.log('Delete anime data:', data);
             toast.success('Anime deleted successfully');
             setAnime((prev: any[]) =>
                 prev.filter(a => a.title !== title)
