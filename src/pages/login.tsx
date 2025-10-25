@@ -21,12 +21,33 @@ export default function Login() {
 
     const handleSignUp = async () => {
         // console.log(userData);
+        const username = userData.username.trim();
+        const email = userData.email.trim();
+        const password = userData.password;
+
+        const isValidEmail = (value: string) => /[^\s@]+@[^\s@]+\.[^\s@]+/.test(value);
+        const isValidUsername = (value: string) => /^[a-zA-Z0-9_]{3,24}$/.test(value);
+        const isValidPassword = (value: string) => value.length >= 6;
+
+        if (!isValidUsername(username)) {
+            toast.error('Username must be 3-24 chars (letters, numbers, _)');
+            return;
+        }
+        if (!isValidEmail(email)) {
+            toast.error('Enter a valid email');
+            return;
+        }
+        if (!isValidPassword(password)) {
+            toast.error('Password must be at least 6 characters');
+            return;
+        }
+
         const { data: _signUpData, error } = await supabase.auth.signUp({
-            email: userData.email,
-            password: userData.password,
+            email,
+            password,
             options: {
                 data: {
-                    username: userData.username,
+                    username,
                 },
             },
         });
@@ -42,9 +63,22 @@ export default function Login() {
 
     const handleLogin = async () => {
         // console.log(userData);
+        const email = userData.email.trim();
+        const password = userData.password;
+
+        const isValidEmail = (value: string) => /[^\s@]+@[^\s@]+\.[^\s@]+/.test(value);
+        if (!isValidEmail(email)) {
+            toast.error('Enter a valid email');
+            return;
+        }
+        if (password.length < 6) {
+            toast.error('Password must be at least 6 characters');
+            return;
+        }
+
         const { data: _loginData, error } = await supabase.auth.signInWithPassword({
-            email: userData.email,
-            password: userData.password,
+            email,
+            password,
         });
         if (error) {
             console.error('Login error:', error);
@@ -71,9 +105,9 @@ export default function Login() {
                     </div>
                 </CardHeader>
                 <CardContent className="flex flex-col gap-3">
-                    {isSignUp && <Input type="text" placeholder="Username" value={userData.username} onChange={(e) => setUserData({ ...userData, username: e.target.value })} />}
-                    <Input type="email" placeholder="Email" value={userData.email} onChange={(e) => setUserData({ ...userData, email: e.target.value })} />
-                    <Input type="password" placeholder="Password"  value={userData.password} onChange={(e) => setUserData({ ...userData, password: e.target.value })} />
+                    {isSignUp && <Input type="text" placeholder="Username" autoComplete="username" required={isSignUp} value={userData.username} onChange={(e) => setUserData({ ...userData, username: e.target.value })} />}
+                    <Input type="email" placeholder="Email" autoComplete="email" required value={userData.email} onChange={(e) => setUserData({ ...userData, email: e.target.value })} />
+                    <Input type="password" placeholder="Password" autoComplete="current-password" minLength={6} required value={userData.password} onChange={(e) => setUserData({ ...userData, password: e.target.value })} />
                     <Button type="submit" onClick={isSignUp ? handleSignUp : handleLogin}>{isSignUp ? "Sign up" : "Login"}</Button>
                 </CardContent>
             </Card>
