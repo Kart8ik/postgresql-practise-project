@@ -30,14 +30,14 @@ export default function Navbar() {
     };
 
     const handleLogout = async () => {
+        // Try a global sign-out first; if the session is missing/invalid, fall back to local
         const { error } = await supabase.auth.signOut();
         if (error) {
-            console.error('Logout error:', error);
-            toast.error("Logout failed");
-        } else {
-            toast.success("Logout successful");
-            navigate("/");
+            // console.error('Logout error:', error);
+            await supabase.auth.signOut({ scope: 'local' });
         }
+        toast.success("Logged out");
+        navigate("/");
     }
     return (
         <header className="border-b bg-background">
